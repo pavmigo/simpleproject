@@ -4,6 +4,10 @@ import { graphql } from 'react-apollo'
 import gql from 'graphql-tag'
 
 class LinkList extends Component {
+   componentDidMount() {
+        this._subscribeToNewLinks()
+        this._subscribeToNewVotes()
+    }
   render() {
       
     if (this.props.feedQuery && this.props.feedQuery.loading) {
@@ -59,7 +63,7 @@ class LinkList extends Component {
                 }
               }
             }
-          }
+          } 
         }
       `,
       updateQuery: (previous, { subscriptionData }) => {
@@ -71,8 +75,39 @@ class LinkList extends Component {
           },
         }
         return result
-        },
-        
+      }
+    })
+  }
+  _subscribeToNewVotes = () => {
+    this.props.feedQuery.subscribeToMore({
+      document: gql`
+        subscription {
+          newVote {
+            node {
+              id
+              link {
+                id
+                url
+                description
+                createdAt
+                postedBy {
+                  id
+                  name
+                }
+                votes {
+                  id
+                  user {
+                    id
+                  }
+                }
+              }
+              user {
+                id
+              }
+            }
+          }
+        }
+      `,
     })
   }
 
