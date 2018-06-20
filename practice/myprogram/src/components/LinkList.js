@@ -82,6 +82,7 @@ class LinkList extends Component {
         },
         
     })
+
   }
 
   _subscribeToNewVotes = () => {
