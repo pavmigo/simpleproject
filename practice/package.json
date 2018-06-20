@@ -1,0 +1,9 @@
+{
+  "dependencies": {
+    "apollo-client-preset": "^1.0.8",
+    "graphql": "^0.13.2",
+    "graphql-tag": "^2.9.2",
+    "praphql": "^0.1.1",
+    "react-apollo": "^2.1.5"
+  }
+}
