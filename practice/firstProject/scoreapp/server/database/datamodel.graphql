@@ -1,0 +1,22 @@
+type User {
+  id: ID! @unique
+  name: String!
+  email: String! @unique
+  password: String!
+  scorePoints: [ScorePoints!]!
+
+}
+
+type ScorePoints{
+  id: ID! @unique
+  scoreLane: String!
+  score: String!
+  createdAt: DateTime!
+}
+
+type LaneInfo{
+  id: ID! @unique
+  laneNumber: Int!
+  laneName: String!
+}
+

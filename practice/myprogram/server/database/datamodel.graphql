@@ -20,4 +20,19 @@ type User {
   password: String!
   links: [Link!]!
   votes: [Vote!]!
+  points: [Points!]!
+}
+
+type Lane {
+  id: ID! @unique
+  number: Int!
+  Score: [Points!]!
+}
+
+type Points{
+  id: ID! @unique
+  lane: Lane!
+  player: User!
+  scoreAt: Int!
+  score: Int!
 }

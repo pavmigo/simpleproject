@@ -1,0 +1,6 @@
+service: scoreapp-node
+stage: dev
+# endpoint: http://localhost:4466
+datamodel: datamodel.graphql
+
+cluster: local

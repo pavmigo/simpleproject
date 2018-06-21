@@ -1,0 +1,23 @@
+# import ScorePoints, ScorePointsSubscriptionPayload from "./generated/prisma.graphql"
+
+
+type Query {
+  user: String!
+  points: [ScorePoints!]!
+}
+
+type AuthPayload {
+  token: String
+  user: User
+}
+
+
+type Mutation{
+    post(score: String!, scoreLane: String!): ScorePoints!
+    signup(email: String!, password: String!, name: String!): AuthPayload
+    login(email: String!, password: String!): AuthPayload
+
+}
+
+type Subcription {
+  newScorePoints: ScorePointsSubscriptionPayload
