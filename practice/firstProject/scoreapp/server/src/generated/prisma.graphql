@@ -11,11 +11,12 @@ type LaneInfo implements Node {
   laneName: String!
 }
 
-type ScorePoints implements Node {
+type ScorePoint implements Node {
   id: ID!
   scoreLane: String!
   score: String!
   createdAt: DateTime!
+  votes(where: VoteWhereInput, orderBy: VoteOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Vote!]
 }
 
 type User implements Node {
@@ -23,7 +24,14 @@ type User implements Node {
   name: String!
   email: String!
   password: String!
-  scorePoints(where: ScorePointsWhereInput, orderBy: ScorePointsOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [ScorePoints!]
+  scorePoints(where: ScorePointWhereInput, orderBy: ScorePointOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [ScorePoint!]
+  votes(where: VoteWhereInput, orderBy: VoteOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Vote!]
+}
+
+type Vote implements Node {
+  id: ID!
+  scorePoint(where: ScorePointWhereInput): ScorePoint!
+  user(where: UserWhereInput): User!
 }
 
 
@@ -35,11 +43,15 @@ type AggregateLaneInfo {
   count: Int!
 }
 
-type AggregateScorePoints {
+type AggregateScorePoint {
   count: Int!
 }
 
 type AggregateUser {
+  count: Int!
+}
+
+type AggregateVote {
   count: Int!
 }
 
@@ -312,22 +324,28 @@ scalar Long
 type Mutation {
   createUser(data: UserCreateInput!): User!
   createLaneInfo(data: LaneInfoCreateInput!): LaneInfo!
-  createScorePoints(data: ScorePointsCreateInput!): ScorePoints!
+  createVote(data: VoteCreateInput!): Vote!
+  createScorePoint(data: ScorePointCreateInput!): ScorePoint!
   updateUser(data: UserUpdateInput!, where: UserWhereUniqueInput!): User
   updateLaneInfo(data: LaneInfoUpdateInput!, where: LaneInfoWhereUniqueInput!): LaneInfo
-  updateScorePoints(data: ScorePointsUpdateInput!, where: ScorePointsWhereUniqueInput!): ScorePoints
+  updateVote(data: VoteUpdateInput!, where: VoteWhereUniqueInput!): Vote
+  updateScorePoint(data: ScorePointUpdateInput!, where: ScorePointWhereUniqueInput!): ScorePoint
   deleteUser(where: UserWhereUniqueInput!): User
   deleteLaneInfo(where: LaneInfoWhereUniqueInput!): LaneInfo
-  deleteScorePoints(where: ScorePointsWhereUniqueInput!): ScorePoints
+  deleteVote(where: VoteWhereUniqueInput!): Vote
+  deleteScorePoint(where: ScorePointWhereUniqueInput!): ScorePoint
   upsertUser(where: UserWhereUniqueInput!, create: UserCreateInput!, update: UserUpdateInput!): User!
   upsertLaneInfo(where: LaneInfoWhereUniqueInput!, create: LaneInfoCreateInput!, update: LaneInfoUpdateInput!): LaneInfo!
-  upsertScorePoints(where: ScorePointsWhereUniqueInput!, create: ScorePointsCreateInput!, update: ScorePointsUpdateInput!): ScorePoints!
+  upsertVote(where: VoteWhereUniqueInput!, create: VoteCreateInput!, update: VoteUpdateInput!): Vote!
+  upsertScorePoint(where: ScorePointWhereUniqueInput!, create: ScorePointCreateInput!, update: ScorePointUpdateInput!): ScorePoint!
   updateManyUsers(data: UserUpdateInput!, where: UserWhereInput): BatchPayload!
   updateManyLaneInfoes(data: LaneInfoUpdateInput!, where: LaneInfoWhereInput): BatchPayload!
-  updateManyScorePointses(data: ScorePointsUpdateInput!, where: ScorePointsWhereInput): BatchPayload!
+  updateManyVotes(data: VoteUpdateInput!, where: VoteWhereInput): BatchPayload!
+  updateManyScorePoints(data: ScorePointUpdateInput!, where: ScorePointWhereInput): BatchPayload!
   deleteManyUsers(where: UserWhereInput): BatchPayload!
   deleteManyLaneInfoes(where: LaneInfoWhereInput): BatchPayload!
-  deleteManyScorePointses(where: ScorePointsWhereInput): BatchPayload!
+  deleteManyVotes(where: VoteWhereInput): BatchPayload!
+  deleteManyScorePoints(where: ScorePointWhereInput): BatchPayload!
 }
 
 enum MutationType {
@@ -371,13 +389,16 @@ type PageInfo {
 type Query {
   users(where: UserWhereInput, orderBy: UserOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [User]!
   laneInfoes(where: LaneInfoWhereInput, orderBy: LaneInfoOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [LaneInfo]!
-  scorePointses(where: ScorePointsWhereInput, orderBy: ScorePointsOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [ScorePoints]!
+  votes(where: VoteWhereInput, orderBy: VoteOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Vote]!
+  scorePoints(where: ScorePointWhereInput, orderBy: ScorePointOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [ScorePoint]!
   user(where: UserWhereUniqueInput!): User
   laneInfo(where: LaneInfoWhereUniqueInput!): LaneInfo
-  scorePoints(where: ScorePointsWhereUniqueInput!): ScorePoints
+  vote(where: VoteWhereUniqueInput!): Vote
+  scorePoint(where: ScorePointWhereUniqueInput!): ScorePoint
   usersConnection(where: UserWhereInput, orderBy: UserOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): UserConnection!
   laneInfoesConnection(where: LaneInfoWhereInput, orderBy: LaneInfoOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): LaneInfoConnection!
-  scorePointsesConnection(where: ScorePointsWhereInput, orderBy: ScorePointsOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): ScorePointsConnection!
+  votesConnection(where: VoteWhereInput, orderBy: VoteOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): VoteConnection!
+  scorePointsConnection(where: ScorePointWhereInput, orderBy: ScorePointOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): ScorePointConnection!
   """
   Fetches an object given its ID
   """
@@ -390,7 +411,7 @@ type Query {
 """
 A connection to a list of items.
 """
-type ScorePointsConnection {
+type ScorePointConnection {
   """
   Information to aid in pagination.
   """
@@ -398,35 +419,46 @@ type ScorePointsConnection {
   """
   A list of edges.
   """
-  edges: [ScorePointsEdge]!
-  aggregate: AggregateScorePoints!
+  edges: [ScorePointEdge]!
+  aggregate: AggregateScorePoint!
 }
 
-input ScorePointsCreateInput {
+input ScorePointCreateInput {
   scoreLane: String!
   score: String!
+  votes: VoteCreateManyWithoutScorePointInput
 }
 
-input ScorePointsCreateManyInput {
-  create: [ScorePointsCreateInput!]
-  connect: [ScorePointsWhereUniqueInput!]
+input ScorePointCreateManyInput {
+  create: [ScorePointCreateInput!]
+  connect: [ScorePointWhereUniqueInput!]
+}
+
+input ScorePointCreateOneWithoutVotesInput {
+  create: ScorePointCreateWithoutVotesInput
+  connect: ScorePointWhereUniqueInput
+}
+
+input ScorePointCreateWithoutVotesInput {
+  scoreLane: String!
+  score: String!
 }
 
 """
 An edge in a connection.
 """
-type ScorePointsEdge {
+type ScorePointEdge {
   """
   The item at the end of the edge.
   """
-  node: ScorePoints!
+  node: ScorePoint!
   """
   A cursor for use in pagination.
   """
   cursor: String!
 }
 
-enum ScorePointsOrderByInput {
+enum ScorePointOrderByInput {
   id_ASC
   id_DESC
   scoreLane_ASC
@@ -439,33 +471,33 @@ enum ScorePointsOrderByInput {
   updatedAt_DESC
 }
 
-type ScorePointsPreviousValues {
+type ScorePointPreviousValues {
   id: ID!
   scoreLane: String!
   score: String!
   createdAt: DateTime!
 }
 
-type ScorePointsSubscriptionPayload {
+type ScorePointSubscriptionPayload {
   mutation: MutationType!
-  node: ScorePoints
+  node: ScorePoint
   updatedFields: [String!]
-  previousValues: ScorePointsPreviousValues
+  previousValues: ScorePointPreviousValues
 }
 
-input ScorePointsSubscriptionWhereInput {
+input ScorePointSubscriptionWhereInput {
   """
   Logical AND on all given filters.
   """
-  AND: [ScorePointsSubscriptionWhereInput!]
+  AND: [ScorePointSubscriptionWhereInput!]
   """
   Logical OR on all given filters.
   """
-  OR: [ScorePointsSubscriptionWhereInput!]
+  OR: [ScorePointSubscriptionWhereInput!]
   """
   Logical NOT on all given filters combined by AND.
   """
-  NOT: [ScorePointsSubscriptionWhereInput!]
+  NOT: [ScorePointSubscriptionWhereInput!]
   """
   The subscription event gets dispatched when it's listed in mutation_in
   """
@@ -482,52 +514,72 @@ input ScorePointsSubscriptionWhereInput {
   The subscription event gets only dispatched when some of the field names included in this list have been updated
   """
   updatedFields_contains_some: [String!]
-  node: ScorePointsWhereInput
+  node: ScorePointWhereInput
 }
 
-input ScorePointsUpdateDataInput {
+input ScorePointUpdateDataInput {
+  scoreLane: String
+  score: String
+  votes: VoteUpdateManyWithoutScorePointInput
+}
+
+input ScorePointUpdateInput {
+  scoreLane: String
+  score: String
+  votes: VoteUpdateManyWithoutScorePointInput
+}
+
+input ScorePointUpdateManyInput {
+  create: [ScorePointCreateInput!]
+  connect: [ScorePointWhereUniqueInput!]
+  disconnect: [ScorePointWhereUniqueInput!]
+  delete: [ScorePointWhereUniqueInput!]
+  update: [ScorePointUpdateWithWhereUniqueNestedInput!]
+  upsert: [ScorePointUpsertWithWhereUniqueNestedInput!]
+}
+
+input ScorePointUpdateOneWithoutVotesInput {
+  create: ScorePointCreateWithoutVotesInput
+  connect: ScorePointWhereUniqueInput
+  delete: Boolean
+  update: ScorePointUpdateWithoutVotesDataInput
+  upsert: ScorePointUpsertWithoutVotesInput
+}
+
+input ScorePointUpdateWithoutVotesDataInput {
   scoreLane: String
   score: String
 }
 
-input ScorePointsUpdateInput {
-  scoreLane: String
-  score: String
+input ScorePointUpdateWithWhereUniqueNestedInput {
+  where: ScorePointWhereUniqueInput!
+  data: ScorePointUpdateDataInput!
 }
 
-input ScorePointsUpdateManyInput {
-  create: [ScorePointsCreateInput!]
-  connect: [ScorePointsWhereUniqueInput!]
-  disconnect: [ScorePointsWhereUniqueInput!]
-  delete: [ScorePointsWhereUniqueInput!]
-  update: [ScorePointsUpdateWithWhereUniqueNestedInput!]
-  upsert: [ScorePointsUpsertWithWhereUniqueNestedInput!]
+input ScorePointUpsertWithoutVotesInput {
+  update: ScorePointUpdateWithoutVotesDataInput!
+  create: ScorePointCreateWithoutVotesInput!
 }
 
-input ScorePointsUpdateWithWhereUniqueNestedInput {
-  where: ScorePointsWhereUniqueInput!
-  data: ScorePointsUpdateDataInput!
+input ScorePointUpsertWithWhereUniqueNestedInput {
+  where: ScorePointWhereUniqueInput!
+  update: ScorePointUpdateDataInput!
+  create: ScorePointCreateInput!
 }
 
-input ScorePointsUpsertWithWhereUniqueNestedInput {
-  where: ScorePointsWhereUniqueInput!
-  update: ScorePointsUpdateDataInput!
-  create: ScorePointsCreateInput!
-}
-
-input ScorePointsWhereInput {
+input ScorePointWhereInput {
   """
   Logical AND on all given filters.
   """
-  AND: [ScorePointsWhereInput!]
+  AND: [ScorePointWhereInput!]
   """
   Logical OR on all given filters.
   """
-  OR: [ScorePointsWhereInput!]
+  OR: [ScorePointWhereInput!]
   """
   Logical NOT on all given filters combined by AND.
   """
-  NOT: [ScorePointsWhereInput!]
+  NOT: [ScorePointWhereInput!]
   id: ID
   """
   All values that are not equal to given value.
@@ -716,19 +768,23 @@ input ScorePointsWhereInput {
   All values greater than or equal the given value.
   """
   createdAt_gte: DateTime
-  _MagicalBackRelation_ScorePointsToUser_every: UserWhereInput
-  _MagicalBackRelation_ScorePointsToUser_some: UserWhereInput
-  _MagicalBackRelation_ScorePointsToUser_none: UserWhereInput
+  votes_every: VoteWhereInput
+  votes_some: VoteWhereInput
+  votes_none: VoteWhereInput
+  _MagicalBackRelation_ScorePointToUser_every: UserWhereInput
+  _MagicalBackRelation_ScorePointToUser_some: UserWhereInput
+  _MagicalBackRelation_ScorePointToUser_none: UserWhereInput
 }
 
-input ScorePointsWhereUniqueInput {
+input ScorePointWhereUniqueInput {
   id: ID
 }
 
 type Subscription {
   user(where: UserSubscriptionWhereInput): UserSubscriptionPayload
   laneInfo(where: LaneInfoSubscriptionWhereInput): LaneInfoSubscriptionPayload
-  scorePoints(where: ScorePointsSubscriptionWhereInput): ScorePointsSubscriptionPayload
+  vote(where: VoteSubscriptionWhereInput): VoteSubscriptionPayload
+  scorePoint(where: ScorePointSubscriptionWhereInput): ScorePointSubscriptionPayload
 }
 
 """
@@ -750,7 +806,20 @@ input UserCreateInput {
   name: String!
   email: String!
   password: String!
-  scorePoints: ScorePointsCreateManyInput
+  scorePoints: ScorePointCreateManyInput
+  votes: VoteCreateManyWithoutUserInput
+}
+
+input UserCreateOneWithoutVotesInput {
+  create: UserCreateWithoutVotesInput
+  connect: UserWhereUniqueInput
+}
+
+input UserCreateWithoutVotesInput {
+  name: String!
+  email: String!
+  password: String!
+  scorePoints: ScorePointCreateManyInput
 }
 
 """
@@ -832,7 +901,28 @@ input UserUpdateInput {
   name: String
   email: String
   password: String
-  scorePoints: ScorePointsUpdateManyInput
+  scorePoints: ScorePointUpdateManyInput
+  votes: VoteUpdateManyWithoutUserInput
+}
+
+input UserUpdateOneWithoutVotesInput {
+  create: UserCreateWithoutVotesInput
+  connect: UserWhereUniqueInput
+  delete: Boolean
+  update: UserUpdateWithoutVotesDataInput
+  upsert: UserUpsertWithoutVotesInput
+}
+
+input UserUpdateWithoutVotesDataInput {
+  name: String
+  email: String
+  password: String
+  scorePoints: ScorePointUpdateManyInput
+}
+
+input UserUpsertWithoutVotesInput {
+  update: UserUpdateWithoutVotesDataInput!
+  create: UserCreateWithoutVotesInput!
 }
 
 input UserWhereInput {
@@ -1060,12 +1150,246 @@ input UserWhereInput {
   All values not ending with the given string.
   """
   password_not_ends_with: String
-  scorePoints_every: ScorePointsWhereInput
-  scorePoints_some: ScorePointsWhereInput
-  scorePoints_none: ScorePointsWhereInput
+  scorePoints_every: ScorePointWhereInput
+  scorePoints_some: ScorePointWhereInput
+  scorePoints_none: ScorePointWhereInput
+  votes_every: VoteWhereInput
+  votes_some: VoteWhereInput
+  votes_none: VoteWhereInput
 }
 
 input UserWhereUniqueInput {
   id: ID
   email: String
+}
+
+"""
+A connection to a list of items.
+"""
+type VoteConnection {
+  """
+  Information to aid in pagination.
+  """
+  pageInfo: PageInfo!
+  """
+  A list of edges.
+  """
+  edges: [VoteEdge]!
+  aggregate: AggregateVote!
+}
+
+input VoteCreateInput {
+  scorePoint: ScorePointCreateOneWithoutVotesInput!
+  user: UserCreateOneWithoutVotesInput!
+}
+
+input VoteCreateManyWithoutScorePointInput {
+  create: [VoteCreateWithoutScorePointInput!]
+  connect: [VoteWhereUniqueInput!]
+}
+
+input VoteCreateManyWithoutUserInput {
+  create: [VoteCreateWithoutUserInput!]
+  connect: [VoteWhereUniqueInput!]
+}
+
+input VoteCreateWithoutScorePointInput {
+  user: UserCreateOneWithoutVotesInput!
+}
+
+input VoteCreateWithoutUserInput {
+  scorePoint: ScorePointCreateOneWithoutVotesInput!
+}
+
+"""
+An edge in a connection.
+"""
+type VoteEdge {
+  """
+  The item at the end of the edge.
+  """
+  node: Vote!
+  """
+  A cursor for use in pagination.
+  """
+  cursor: String!
+}
+
+enum VoteOrderByInput {
+  id_ASC
+  id_DESC
+  updatedAt_ASC
+  updatedAt_DESC
+  createdAt_ASC
+  createdAt_DESC
+}
+
+type VotePreviousValues {
+  id: ID!
+}
+
+type VoteSubscriptionPayload {
+  mutation: MutationType!
+  node: Vote
+  updatedFields: [String!]
+  previousValues: VotePreviousValues
+}
+
+input VoteSubscriptionWhereInput {
+  """
+  Logical AND on all given filters.
+  """
+  AND: [VoteSubscriptionWhereInput!]
+  """
+  Logical OR on all given filters.
+  """
+  OR: [VoteSubscriptionWhereInput!]
+  """
+  Logical NOT on all given filters combined by AND.
+  """
+  NOT: [VoteSubscriptionWhereInput!]
+  """
+  The subscription event gets dispatched when it's listed in mutation_in
+  """
+  mutation_in: [MutationType!]
+  """
+  The subscription event gets only dispatched when one of the updated fields names is included in this list
+  """
+  updatedFields_contains: String
+  """
+  The subscription event gets only dispatched when all of the field names included in this list have been updated
+  """
+  updatedFields_contains_every: [String!]
+  """
+  The subscription event gets only dispatched when some of the field names included in this list have been updated
+  """
+  updatedFields_contains_some: [String!]
+  node: VoteWhereInput
+}
+
+input VoteUpdateInput {
+  scorePoint: ScorePointUpdateOneWithoutVotesInput
+  user: UserUpdateOneWithoutVotesInput
+}
+
+input VoteUpdateManyWithoutScorePointInput {
+  create: [VoteCreateWithoutScorePointInput!]
+  connect: [VoteWhereUniqueInput!]
+  disconnect: [VoteWhereUniqueInput!]
+  delete: [VoteWhereUniqueInput!]
+  update: [VoteUpdateWithWhereUniqueWithoutScorePointInput!]
+  upsert: [VoteUpsertWithWhereUniqueWithoutScorePointInput!]
+}
+
+input VoteUpdateManyWithoutUserInput {
+  create: [VoteCreateWithoutUserInput!]
+  connect: [VoteWhereUniqueInput!]
+  disconnect: [VoteWhereUniqueInput!]
+  delete: [VoteWhereUniqueInput!]
+  update: [VoteUpdateWithWhereUniqueWithoutUserInput!]
+  upsert: [VoteUpsertWithWhereUniqueWithoutUserInput!]
+}
+
+input VoteUpdateWithoutScorePointDataInput {
+  user: UserUpdateOneWithoutVotesInput
+}
+
+input VoteUpdateWithoutUserDataInput {
+  scorePoint: ScorePointUpdateOneWithoutVotesInput
+}
+
+input VoteUpdateWithWhereUniqueWithoutScorePointInput {
+  where: VoteWhereUniqueInput!
+  data: VoteUpdateWithoutScorePointDataInput!
+}
+
+input VoteUpdateWithWhereUniqueWithoutUserInput {
+  where: VoteWhereUniqueInput!
+  data: VoteUpdateWithoutUserDataInput!
+}
+
+input VoteUpsertWithWhereUniqueWithoutScorePointInput {
+  where: VoteWhereUniqueInput!
+  update: VoteUpdateWithoutScorePointDataInput!
+  create: VoteCreateWithoutScorePointInput!
+}
+
+input VoteUpsertWithWhereUniqueWithoutUserInput {
+  where: VoteWhereUniqueInput!
+  update: VoteUpdateWithoutUserDataInput!
+  create: VoteCreateWithoutUserInput!
+}
+
+input VoteWhereInput {
+  """
+  Logical AND on all given filters.
+  """
+  AND: [VoteWhereInput!]
+  """
+  Logical OR on all given filters.
+  """
+  OR: [VoteWhereInput!]
+  """
+  Logical NOT on all given filters combined by AND.
+  """
+  NOT: [VoteWhereInput!]
+  id: ID
+  """
+  All values that are not equal to given value.
+  """
+  id_not: ID
+  """
+  All values that are contained in given list.
+  """
+  id_in: [ID!]
+  """
+  All values that are not contained in given list.
+  """
+  id_not_in: [ID!]
+  """
+  All values less than the given value.
+  """
+  id_lt: ID
+  """
+  All values less than or equal the given value.
+  """
+  id_lte: ID
+  """
+  All values greater than the given value.
+  """
+  id_gt: ID
+  """
+  All values greater than or equal the given value.
+  """
+  id_gte: ID
+  """
+  All values containing the given string.
+  """
+  id_contains: ID
+  """
+  All values not containing the given string.
+  """
+  id_not_contains: ID
+  """
+  All values starting with the given string.
+  """
+  id_starts_with: ID
+  """
+  All values not starting with the given string.
+  """
+  id_not_starts_with: ID
+  """
+  All values ending with the given string.
+  """
+  id_ends_with: ID
+  """
+  All values not ending with the given string.
+  """
+  id_not_ends_with: ID
+  scorePoint: ScorePointWhereInput
+  user: UserWhereInput
+}
+
+input VoteWhereUniqueInput {
+  id: ID
 }

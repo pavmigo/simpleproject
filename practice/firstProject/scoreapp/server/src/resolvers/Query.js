@@ -1,5 +1,5 @@
 function points(parent, args, context, info){
-    return context.db.query.ScorePoints({},info)
+    return context.db.query.scorePoints({},info)
 
 }
 

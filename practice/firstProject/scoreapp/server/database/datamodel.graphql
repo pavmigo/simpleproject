@@ -3,20 +3,28 @@ type User {
   name: String!
   email: String! @unique
   password: String!
-  scorePoints: [ScorePoints!]!
+  scorePoints: [ScorePoint!]!
+  votes: [Vote!]!
 
 }
 
-type ScorePoints{
+type ScorePoint{
   id: ID! @unique
   scoreLane: String!
   score: String!
   createdAt: DateTime!
+  votes: [Vote!]!
 }
 
 type LaneInfo{
   id: ID! @unique
   laneNumber: Int!
   laneName: String!
+}
+
+type Vote{
+  id: ID! @unique
+  scorePoint: ScorePoint!
+  user: User!
 }
 

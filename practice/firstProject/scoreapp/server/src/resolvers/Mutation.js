@@ -37,9 +37,32 @@ async function login(parent, args, context, info){
   }
 }
 
+async function vote(parent, args, context, info){
+    const userId = getUserId(context)
+
+    const voteExist = await context.db.exists.Vote({
+        user: {id: userId },
+        scorePoint: {id: args.scorePointID},
+
+    })
+
+    if (voteExist){
+        throw new Error(`Already voted for Score: ${args.scorePointID}`)
+
+    }
+
+    return context.db.mutation.createVote({
+        data: {
+            user: {connect: {id: userId }},
+            scorePoint: { connect: {id: args.scorePointID } },
+        },
+
+    },info,)
+}
+
 function post(parent, args, context, info) {
     const userId = getUserId(context)
-    return context.db.mutation.createScorePoints(
+    return context.db.mutation.createScorePoint(
       {
         data: {
           scoreLane: args.scoreLane,
@@ -50,8 +73,10 @@ function post(parent, args, context, info) {
     )
   }
 
+
 module.exports = {
     signup,
     login,
     post,
+    vote,
 }
