@@ -5,26 +5,26 @@ import gql from 'graphql-tag'
 import Tournament from './Tournament'
 
 class TournamentList extends Component {
-    componentDidMount(){
 
-    } 
-    render(){
+    render() {
         if(this.props.query && this.props.query.loading){
             return <div>Loading </div>
+        }
         if(this.props.query && this.props.query.error){
             return <div>Error</div>
         }
-        const tournamentsToRender = this.props.query.points
-
-        }
+        const tournamentsToRender = this.props.query.tournaments
+        
+        console.log(this.props)
 
         return(
             <div>
                 <div><h3>Tournament List: </h3></div>
                 <div>
                     {tournamentsToRender.map((tournament) => (
-                        console.log("hello") //Here goes the torunament class
-                    ))}
+                        <Tournament key = {tournament.id} tournament = {tournament} />
+                    ))
+                    }
                 </div>
             </div>
         )
@@ -46,4 +46,4 @@ export const tournament_query = gql`
         }
     }
     `
-export default graphql(tournament_query,{name: 'query'}) (Tournament)
+export default graphql(tournament_query,{name: 'query'}) (TournamentList)

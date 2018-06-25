@@ -80,6 +80,7 @@ function post(parent, args, context, info) {
               data: {
                   name: args.name,
                   location: args.location
+                  //Later add conections
               }
           }
       )

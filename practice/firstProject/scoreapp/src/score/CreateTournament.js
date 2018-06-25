@@ -12,7 +12,7 @@ class CreateTournament extends Component {
     render(){
         return(
             <div>
-                <div clasName = "CreateTournament">
+                <div className = "CreateTournament">
                     Tournament Name: 
                     <input
                     className = "createTournament"
@@ -22,14 +22,14 @@ class CreateTournament extends Component {
                     placeholder = "Name of Tournament"
                     />
                 </div>
-                <div>
-                    Location:
+                <div className = "CreateTournament">
+                    Location: 
                     <input
                     className = "createTournament"
                     value = {this.state.location}
-                    onChange={e => this.setState({scoreLane: e.target.value})}
+                    onChange = { e => this.setState({location: e.target.value})}
                     type = "text"
-                    placeholder = "Tournament location"
+                    placeholder = "Name of Tournament"
                     />
                 </div>
                 <button onClick = {() => this._createTournament()}>Submit</button>
@@ -48,7 +48,7 @@ class CreateTournament extends Component {
             update: (store, {data: {post}}) => {
                 const data = store.readQuery({query: tournament_query })
                 data.points.splice(0,0, post)
-                tore.writeQuery({
+                store.writeQuery({
                     query: tournament_query,
                     data
                 })
@@ -60,16 +60,14 @@ class CreateTournament extends Component {
 }
 
 
-const CREATETOURNAMENT_MUTATION = gql`
-    mutation CreateTournament($name: String!, $location: String!){
-        mutation{
-            createTournament(name: $name, location: $location){
-              id
-              location
-              name
-            }
-          }
-    }    
+const createTor_mutation = gql`
+    mutation CreateMutation($name: String!, $location: String!){
+        createTournament(name: $name, location: $location){
+            id
+            location
+            name
+        }
+    }  
 `
 
-export default graphql(CREATETOURNAMENT_MUTATION, {name: 'mutation'})(CreateTournament)
+export default graphql(createTor_mutation, {name: 'mutation'}) (CreateTournament)

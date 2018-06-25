@@ -23,6 +23,10 @@ class Header extends Component {
         <Link to="/createTournament">
           Create Tournament
         </Link>
+        |
+        <Link to="/tournamentList">
+        List of Tournament
+        </Link>
 
 
           |
