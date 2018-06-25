@@ -3,6 +3,12 @@ function points(parent, args, context, info){
 
 }
 
+function tournaments(parent, args, context, info){
+    return context.db.query.tournaments({}, info)
+
+}
+
 module.exports = {
-    points
+    points,
+    tournaments,
 }

@@ -1,6 +1,7 @@
 import React, { Component } from 'react'
 import { graphql } from 'react-apollo'
 import gql from 'graphql-tag'
+import {point_query} from './ScoreList'
 
 class CreateScore extends Component {
     state = {
@@ -43,6 +44,15 @@ class CreateScore extends Component {
             variables: {
                 score,
                 scoreLane
+            },
+            update: (store, {data: {post}}) => {
+                //console.log(store)
+                const data = store.readQuery({ query: point_query})
+                data.points.splice(0,0, post)
+                store.writeQuery({
+                    query: point_query,
+                    data,
+                })
             }
         })
         this.props.history.push('/')
@@ -55,6 +65,9 @@ const POST_MUTATION = gql`
             id
             score
             scoreLane
+            createdBy{
+                name
+            }
         }
     }
 `

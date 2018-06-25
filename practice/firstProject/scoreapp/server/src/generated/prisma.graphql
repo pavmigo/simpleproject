@@ -16,7 +16,17 @@ type ScorePoint implements Node {
   scoreLane: String!
   score: String!
   createdAt: DateTime!
+  createdBy(where: UserWhereInput): User!
   votes(where: VoteWhereInput, orderBy: VoteOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Vote!]
+  tournaments(where: TournamentWhereInput): Tournament
+}
+
+type Tournament implements Node {
+  id: ID!
+  name: String!
+  location: String!
+  score(where: ScorePointWhereInput, orderBy: ScorePointOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [ScorePoint!]
+  user(where: UserWhereInput, orderBy: UserOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [User!]
 }
 
 type User implements Node {
@@ -26,6 +36,7 @@ type User implements Node {
   password: String!
   scorePoints(where: ScorePointWhereInput, orderBy: ScorePointOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [ScorePoint!]
   votes(where: VoteWhereInput, orderBy: VoteOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Vote!]
+  tournaments(where: TournamentWhereInput, orderBy: TournamentOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Tournament!]
 }
 
 type Vote implements Node {
@@ -44,6 +55,10 @@ type AggregateLaneInfo {
 }
 
 type AggregateScorePoint {
+  count: Int!
+}
+
+type AggregateTournament {
   count: Int!
 }
 
@@ -323,29 +338,35 @@ scalar Long
 
 type Mutation {
   createUser(data: UserCreateInput!): User!
+  createScorePoint(data: ScorePointCreateInput!): ScorePoint!
   createLaneInfo(data: LaneInfoCreateInput!): LaneInfo!
   createVote(data: VoteCreateInput!): Vote!
-  createScorePoint(data: ScorePointCreateInput!): ScorePoint!
+  createTournament(data: TournamentCreateInput!): Tournament!
   updateUser(data: UserUpdateInput!, where: UserWhereUniqueInput!): User
+  updateScorePoint(data: ScorePointUpdateInput!, where: ScorePointWhereUniqueInput!): ScorePoint
   updateLaneInfo(data: LaneInfoUpdateInput!, where: LaneInfoWhereUniqueInput!): LaneInfo
   updateVote(data: VoteUpdateInput!, where: VoteWhereUniqueInput!): Vote
-  updateScorePoint(data: ScorePointUpdateInput!, where: ScorePointWhereUniqueInput!): ScorePoint
+  updateTournament(data: TournamentUpdateInput!, where: TournamentWhereUniqueInput!): Tournament
   deleteUser(where: UserWhereUniqueInput!): User
+  deleteScorePoint(where: ScorePointWhereUniqueInput!): ScorePoint
   deleteLaneInfo(where: LaneInfoWhereUniqueInput!): LaneInfo
   deleteVote(where: VoteWhereUniqueInput!): Vote
-  deleteScorePoint(where: ScorePointWhereUniqueInput!): ScorePoint
+  deleteTournament(where: TournamentWhereUniqueInput!): Tournament
   upsertUser(where: UserWhereUniqueInput!, create: UserCreateInput!, update: UserUpdateInput!): User!
+  upsertScorePoint(where: ScorePointWhereUniqueInput!, create: ScorePointCreateInput!, update: ScorePointUpdateInput!): ScorePoint!
   upsertLaneInfo(where: LaneInfoWhereUniqueInput!, create: LaneInfoCreateInput!, update: LaneInfoUpdateInput!): LaneInfo!
   upsertVote(where: VoteWhereUniqueInput!, create: VoteCreateInput!, update: VoteUpdateInput!): Vote!
-  upsertScorePoint(where: ScorePointWhereUniqueInput!, create: ScorePointCreateInput!, update: ScorePointUpdateInput!): ScorePoint!
+  upsertTournament(where: TournamentWhereUniqueInput!, create: TournamentCreateInput!, update: TournamentUpdateInput!): Tournament!
   updateManyUsers(data: UserUpdateInput!, where: UserWhereInput): BatchPayload!
+  updateManyScorePoints(data: ScorePointUpdateInput!, where: ScorePointWhereInput): BatchPayload!
   updateManyLaneInfoes(data: LaneInfoUpdateInput!, where: LaneInfoWhereInput): BatchPayload!
   updateManyVotes(data: VoteUpdateInput!, where: VoteWhereInput): BatchPayload!
-  updateManyScorePoints(data: ScorePointUpdateInput!, where: ScorePointWhereInput): BatchPayload!
+  updateManyTournaments(data: TournamentUpdateInput!, where: TournamentWhereInput): BatchPayload!
   deleteManyUsers(where: UserWhereInput): BatchPayload!
+  deleteManyScorePoints(where: ScorePointWhereInput): BatchPayload!
   deleteManyLaneInfoes(where: LaneInfoWhereInput): BatchPayload!
   deleteManyVotes(where: VoteWhereInput): BatchPayload!
-  deleteManyScorePoints(where: ScorePointWhereInput): BatchPayload!
+  deleteManyTournaments(where: TournamentWhereInput): BatchPayload!
 }
 
 enum MutationType {
@@ -388,17 +409,20 @@ type PageInfo {
 
 type Query {
   users(where: UserWhereInput, orderBy: UserOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [User]!
+  scorePoints(where: ScorePointWhereInput, orderBy: ScorePointOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [ScorePoint]!
   laneInfoes(where: LaneInfoWhereInput, orderBy: LaneInfoOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [LaneInfo]!
   votes(where: VoteWhereInput, orderBy: VoteOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Vote]!
-  scorePoints(where: ScorePointWhereInput, orderBy: ScorePointOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [ScorePoint]!
+  tournaments(where: TournamentWhereInput, orderBy: TournamentOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Tournament]!
   user(where: UserWhereUniqueInput!): User
+  scorePoint(where: ScorePointWhereUniqueInput!): ScorePoint
   laneInfo(where: LaneInfoWhereUniqueInput!): LaneInfo
   vote(where: VoteWhereUniqueInput!): Vote
-  scorePoint(where: ScorePointWhereUniqueInput!): ScorePoint
+  tournament(where: TournamentWhereUniqueInput!): Tournament
   usersConnection(where: UserWhereInput, orderBy: UserOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): UserConnection!
+  scorePointsConnection(where: ScorePointWhereInput, orderBy: ScorePointOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): ScorePointConnection!
   laneInfoesConnection(where: LaneInfoWhereInput, orderBy: LaneInfoOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): LaneInfoConnection!
   votesConnection(where: VoteWhereInput, orderBy: VoteOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): VoteConnection!
-  scorePointsConnection(where: ScorePointWhereInput, orderBy: ScorePointOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): ScorePointConnection!
+  tournamentsConnection(where: TournamentWhereInput, orderBy: TournamentOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): TournamentConnection!
   """
   Fetches an object given its ID
   """
@@ -426,11 +450,18 @@ type ScorePointConnection {
 input ScorePointCreateInput {
   scoreLane: String!
   score: String!
+  createdBy: UserCreateOneWithoutScorePointsInput!
   votes: VoteCreateManyWithoutScorePointInput
+  tournaments: TournamentCreateOneWithoutScoreInput
 }
 
-input ScorePointCreateManyInput {
-  create: [ScorePointCreateInput!]
+input ScorePointCreateManyWithoutCreatedByInput {
+  create: [ScorePointCreateWithoutCreatedByInput!]
+  connect: [ScorePointWhereUniqueInput!]
+}
+
+input ScorePointCreateManyWithoutTournamentsInput {
+  create: [ScorePointCreateWithoutTournamentsInput!]
   connect: [ScorePointWhereUniqueInput!]
 }
 
@@ -439,9 +470,25 @@ input ScorePointCreateOneWithoutVotesInput {
   connect: ScorePointWhereUniqueInput
 }
 
+input ScorePointCreateWithoutCreatedByInput {
+  scoreLane: String!
+  score: String!
+  votes: VoteCreateManyWithoutScorePointInput
+  tournaments: TournamentCreateOneWithoutScoreInput
+}
+
+input ScorePointCreateWithoutTournamentsInput {
+  scoreLane: String!
+  score: String!
+  createdBy: UserCreateOneWithoutScorePointsInput!
+  votes: VoteCreateManyWithoutScorePointInput
+}
+
 input ScorePointCreateWithoutVotesInput {
   scoreLane: String!
   score: String!
+  createdBy: UserCreateOneWithoutScorePointsInput!
+  tournaments: TournamentCreateOneWithoutScoreInput
 }
 
 """
@@ -517,25 +564,30 @@ input ScorePointSubscriptionWhereInput {
   node: ScorePointWhereInput
 }
 
-input ScorePointUpdateDataInput {
-  scoreLane: String
-  score: String
-  votes: VoteUpdateManyWithoutScorePointInput
-}
-
 input ScorePointUpdateInput {
   scoreLane: String
   score: String
+  createdBy: UserUpdateOneWithoutScorePointsInput
   votes: VoteUpdateManyWithoutScorePointInput
+  tournaments: TournamentUpdateOneWithoutScoreInput
 }
 
-input ScorePointUpdateManyInput {
-  create: [ScorePointCreateInput!]
+input ScorePointUpdateManyWithoutCreatedByInput {
+  create: [ScorePointCreateWithoutCreatedByInput!]
   connect: [ScorePointWhereUniqueInput!]
   disconnect: [ScorePointWhereUniqueInput!]
   delete: [ScorePointWhereUniqueInput!]
-  update: [ScorePointUpdateWithWhereUniqueNestedInput!]
-  upsert: [ScorePointUpsertWithWhereUniqueNestedInput!]
+  update: [ScorePointUpdateWithWhereUniqueWithoutCreatedByInput!]
+  upsert: [ScorePointUpsertWithWhereUniqueWithoutCreatedByInput!]
+}
+
+input ScorePointUpdateManyWithoutTournamentsInput {
+  create: [ScorePointCreateWithoutTournamentsInput!]
+  connect: [ScorePointWhereUniqueInput!]
+  disconnect: [ScorePointWhereUniqueInput!]
+  delete: [ScorePointWhereUniqueInput!]
+  update: [ScorePointUpdateWithWhereUniqueWithoutTournamentsInput!]
+  upsert: [ScorePointUpsertWithWhereUniqueWithoutTournamentsInput!]
 }
 
 input ScorePointUpdateOneWithoutVotesInput {
@@ -546,14 +598,35 @@ input ScorePointUpdateOneWithoutVotesInput {
   upsert: ScorePointUpsertWithoutVotesInput
 }
 
+input ScorePointUpdateWithoutCreatedByDataInput {
+  scoreLane: String
+  score: String
+  votes: VoteUpdateManyWithoutScorePointInput
+  tournaments: TournamentUpdateOneWithoutScoreInput
+}
+
+input ScorePointUpdateWithoutTournamentsDataInput {
+  scoreLane: String
+  score: String
+  createdBy: UserUpdateOneWithoutScorePointsInput
+  votes: VoteUpdateManyWithoutScorePointInput
+}
+
 input ScorePointUpdateWithoutVotesDataInput {
   scoreLane: String
   score: String
+  createdBy: UserUpdateOneWithoutScorePointsInput
+  tournaments: TournamentUpdateOneWithoutScoreInput
 }
 
-input ScorePointUpdateWithWhereUniqueNestedInput {
+input ScorePointUpdateWithWhereUniqueWithoutCreatedByInput {
   where: ScorePointWhereUniqueInput!
-  data: ScorePointUpdateDataInput!
+  data: ScorePointUpdateWithoutCreatedByDataInput!
+}
+
+input ScorePointUpdateWithWhereUniqueWithoutTournamentsInput {
+  where: ScorePointWhereUniqueInput!
+  data: ScorePointUpdateWithoutTournamentsDataInput!
 }
 
 input ScorePointUpsertWithoutVotesInput {
@@ -561,10 +634,16 @@ input ScorePointUpsertWithoutVotesInput {
   create: ScorePointCreateWithoutVotesInput!
 }
 
-input ScorePointUpsertWithWhereUniqueNestedInput {
+input ScorePointUpsertWithWhereUniqueWithoutCreatedByInput {
   where: ScorePointWhereUniqueInput!
-  update: ScorePointUpdateDataInput!
-  create: ScorePointCreateInput!
+  update: ScorePointUpdateWithoutCreatedByDataInput!
+  create: ScorePointCreateWithoutCreatedByInput!
+}
+
+input ScorePointUpsertWithWhereUniqueWithoutTournamentsInput {
+  where: ScorePointWhereUniqueInput!
+  update: ScorePointUpdateWithoutTournamentsDataInput!
+  create: ScorePointCreateWithoutTournamentsInput!
 }
 
 input ScorePointWhereInput {
@@ -768,12 +847,11 @@ input ScorePointWhereInput {
   All values greater than or equal the given value.
   """
   createdAt_gte: DateTime
+  createdBy: UserWhereInput
   votes_every: VoteWhereInput
   votes_some: VoteWhereInput
   votes_none: VoteWhereInput
-  _MagicalBackRelation_ScorePointToUser_every: UserWhereInput
-  _MagicalBackRelation_ScorePointToUser_some: UserWhereInput
-  _MagicalBackRelation_ScorePointToUser_none: UserWhereInput
+  tournaments: TournamentWhereInput
 }
 
 input ScorePointWhereUniqueInput {
@@ -782,9 +860,363 @@ input ScorePointWhereUniqueInput {
 
 type Subscription {
   user(where: UserSubscriptionWhereInput): UserSubscriptionPayload
+  scorePoint(where: ScorePointSubscriptionWhereInput): ScorePointSubscriptionPayload
   laneInfo(where: LaneInfoSubscriptionWhereInput): LaneInfoSubscriptionPayload
   vote(where: VoteSubscriptionWhereInput): VoteSubscriptionPayload
-  scorePoint(where: ScorePointSubscriptionWhereInput): ScorePointSubscriptionPayload
+  tournament(where: TournamentSubscriptionWhereInput): TournamentSubscriptionPayload
+}
+
+"""
+A connection to a list of items.
+"""
+type TournamentConnection {
+  """
+  Information to aid in pagination.
+  """
+  pageInfo: PageInfo!
+  """
+  A list of edges.
+  """
+  edges: [TournamentEdge]!
+  aggregate: AggregateTournament!
+}
+
+input TournamentCreateInput {
+  name: String!
+  location: String!
+  score: ScorePointCreateManyWithoutTournamentsInput
+  user: UserCreateManyWithoutTournamentsInput
+}
+
+input TournamentCreateManyWithoutUserInput {
+  create: [TournamentCreateWithoutUserInput!]
+  connect: [TournamentWhereUniqueInput!]
+}
+
+input TournamentCreateOneWithoutScoreInput {
+  create: TournamentCreateWithoutScoreInput
+  connect: TournamentWhereUniqueInput
+}
+
+input TournamentCreateWithoutScoreInput {
+  name: String!
+  location: String!
+  user: UserCreateManyWithoutTournamentsInput
+}
+
+input TournamentCreateWithoutUserInput {
+  name: String!
+  location: String!
+  score: ScorePointCreateManyWithoutTournamentsInput
+}
+
+"""
+An edge in a connection.
+"""
+type TournamentEdge {
+  """
+  The item at the end of the edge.
+  """
+  node: Tournament!
+  """
+  A cursor for use in pagination.
+  """
+  cursor: String!
+}
+
+enum TournamentOrderByInput {
+  id_ASC
+  id_DESC
+  name_ASC
+  name_DESC
+  location_ASC
+  location_DESC
+  updatedAt_ASC
+  updatedAt_DESC
+  createdAt_ASC
+  createdAt_DESC
+}
+
+type TournamentPreviousValues {
+  id: ID!
+  name: String!
+  location: String!
+}
+
+type TournamentSubscriptionPayload {
+  mutation: MutationType!
+  node: Tournament
+  updatedFields: [String!]
+  previousValues: TournamentPreviousValues
+}
+
+input TournamentSubscriptionWhereInput {
+  """
+  Logical AND on all given filters.
+  """
+  AND: [TournamentSubscriptionWhereInput!]
+  """
+  Logical OR on all given filters.
+  """
+  OR: [TournamentSubscriptionWhereInput!]
+  """
+  Logical NOT on all given filters combined by AND.
+  """
+  NOT: [TournamentSubscriptionWhereInput!]
+  """
+  The subscription event gets dispatched when it's listed in mutation_in
+  """
+  mutation_in: [MutationType!]
+  """
+  The subscription event gets only dispatched when one of the updated fields names is included in this list
+  """
+  updatedFields_contains: String
+  """
+  The subscription event gets only dispatched when all of the field names included in this list have been updated
+  """
+  updatedFields_contains_every: [String!]
+  """
+  The subscription event gets only dispatched when some of the field names included in this list have been updated
+  """
+  updatedFields_contains_some: [String!]
+  node: TournamentWhereInput
+}
+
+input TournamentUpdateInput {
+  name: String
+  location: String
+  score: ScorePointUpdateManyWithoutTournamentsInput
+  user: UserUpdateManyWithoutTournamentsInput
+}
+
+input TournamentUpdateManyWithoutUserInput {
+  create: [TournamentCreateWithoutUserInput!]
+  connect: [TournamentWhereUniqueInput!]
+  disconnect: [TournamentWhereUniqueInput!]
+  delete: [TournamentWhereUniqueInput!]
+  update: [TournamentUpdateWithWhereUniqueWithoutUserInput!]
+  upsert: [TournamentUpsertWithWhereUniqueWithoutUserInput!]
+}
+
+input TournamentUpdateOneWithoutScoreInput {
+  create: TournamentCreateWithoutScoreInput
+  connect: TournamentWhereUniqueInput
+  disconnect: Boolean
+  delete: Boolean
+  update: TournamentUpdateWithoutScoreDataInput
+  upsert: TournamentUpsertWithoutScoreInput
+}
+
+input TournamentUpdateWithoutScoreDataInput {
+  name: String
+  location: String
+  user: UserUpdateManyWithoutTournamentsInput
+}
+
+input TournamentUpdateWithoutUserDataInput {
+  name: String
+  location: String
+  score: ScorePointUpdateManyWithoutTournamentsInput
+}
+
+input TournamentUpdateWithWhereUniqueWithoutUserInput {
+  where: TournamentWhereUniqueInput!
+  data: TournamentUpdateWithoutUserDataInput!
+}
+
+input TournamentUpsertWithoutScoreInput {
+  update: TournamentUpdateWithoutScoreDataInput!
+  create: TournamentCreateWithoutScoreInput!
+}
+
+input TournamentUpsertWithWhereUniqueWithoutUserInput {
+  where: TournamentWhereUniqueInput!
+  update: TournamentUpdateWithoutUserDataInput!
+  create: TournamentCreateWithoutUserInput!
+}
+
+input TournamentWhereInput {
+  """
+  Logical AND on all given filters.
+  """
+  AND: [TournamentWhereInput!]
+  """
+  Logical OR on all given filters.
+  """
+  OR: [TournamentWhereInput!]
+  """
+  Logical NOT on all given filters combined by AND.
+  """
+  NOT: [TournamentWhereInput!]
+  id: ID
+  """
+  All values that are not equal to given value.
+  """
+  id_not: ID
+  """
+  All values that are contained in given list.
+  """
+  id_in: [ID!]
+  """
+  All values that are not contained in given list.
+  """
+  id_not_in: [ID!]
+  """
+  All values less than the given value.
+  """
+  id_lt: ID
+  """
+  All values less than or equal the given value.
+  """
+  id_lte: ID
+  """
+  All values greater than the given value.
+  """
+  id_gt: ID
+  """
+  All values greater than or equal the given value.
+  """
+  id_gte: ID
+  """
+  All values containing the given string.
+  """
+  id_contains: ID
+  """
+  All values not containing the given string.
+  """
+  id_not_contains: ID
+  """
+  All values starting with the given string.
+  """
+  id_starts_with: ID
+  """
+  All values not starting with the given string.
+  """
+  id_not_starts_with: ID
+  """
+  All values ending with the given string.
+  """
+  id_ends_with: ID
+  """
+  All values not ending with the given string.
+  """
+  id_not_ends_with: ID
+  name: String
+  """
+  All values that are not equal to given value.
+  """
+  name_not: String
+  """
+  All values that are contained in given list.
+  """
+  name_in: [String!]
+  """
+  All values that are not contained in given list.
+  """
+  name_not_in: [String!]
+  """
+  All values less than the given value.
+  """
+  name_lt: String
+  """
+  All values less than or equal the given value.
+  """
+  name_lte: String
+  """
+  All values greater than the given value.
+  """
+  name_gt: String
+  """
+  All values greater than or equal the given value.
+  """
+  name_gte: String
+  """
+  All values containing the given string.
+  """
+  name_contains: String
+  """
+  All values not containing the given string.
+  """
+  name_not_contains: String
+  """
+  All values starting with the given string.
+  """
+  name_starts_with: String
+  """
+  All values not starting with the given string.
+  """
+  name_not_starts_with: String
+  """
+  All values ending with the given string.
+  """
+  name_ends_with: String
+  """
+  All values not ending with the given string.
+  """
+  name_not_ends_with: String
+  location: String
+  """
+  All values that are not equal to given value.
+  """
+  location_not: String
+  """
+  All values that are contained in given list.
+  """
+  location_in: [String!]
+  """
+  All values that are not contained in given list.
+  """
+  location_not_in: [String!]
+  """
+  All values less than the given value.
+  """
+  location_lt: String
+  """
+  All values less than or equal the given value.
+  """
+  location_lte: String
+  """
+  All values greater than the given value.
+  """
+  location_gt: String
+  """
+  All values greater than or equal the given value.
+  """
+  location_gte: String
+  """
+  All values containing the given string.
+  """
+  location_contains: String
+  """
+  All values not containing the given string.
+  """
+  location_not_contains: String
+  """
+  All values starting with the given string.
+  """
+  location_starts_with: String
+  """
+  All values not starting with the given string.
+  """
+  location_not_starts_with: String
+  """
+  All values ending with the given string.
+  """
+  location_ends_with: String
+  """
+  All values not ending with the given string.
+  """
+  location_not_ends_with: String
+  score_every: ScorePointWhereInput
+  score_some: ScorePointWhereInput
+  score_none: ScorePointWhereInput
+  user_every: UserWhereInput
+  user_some: UserWhereInput
+  user_none: UserWhereInput
+}
+
+input TournamentWhereUniqueInput {
+  id: ID
 }
 
 """
@@ -806,8 +1238,19 @@ input UserCreateInput {
   name: String!
   email: String!
   password: String!
-  scorePoints: ScorePointCreateManyInput
+  scorePoints: ScorePointCreateManyWithoutCreatedByInput
   votes: VoteCreateManyWithoutUserInput
+  tournaments: TournamentCreateManyWithoutUserInput
+}
+
+input UserCreateManyWithoutTournamentsInput {
+  create: [UserCreateWithoutTournamentsInput!]
+  connect: [UserWhereUniqueInput!]
+}
+
+input UserCreateOneWithoutScorePointsInput {
+  create: UserCreateWithoutScorePointsInput
+  connect: UserWhereUniqueInput
 }
 
 input UserCreateOneWithoutVotesInput {
@@ -815,11 +1258,28 @@ input UserCreateOneWithoutVotesInput {
   connect: UserWhereUniqueInput
 }
 
+input UserCreateWithoutScorePointsInput {
+  name: String!
+  email: String!
+  password: String!
+  votes: VoteCreateManyWithoutUserInput
+  tournaments: TournamentCreateManyWithoutUserInput
+}
+
+input UserCreateWithoutTournamentsInput {
+  name: String!
+  email: String!
+  password: String!
+  scorePoints: ScorePointCreateManyWithoutCreatedByInput
+  votes: VoteCreateManyWithoutUserInput
+}
+
 input UserCreateWithoutVotesInput {
   name: String!
   email: String!
   password: String!
-  scorePoints: ScorePointCreateManyInput
+  scorePoints: ScorePointCreateManyWithoutCreatedByInput
+  tournaments: TournamentCreateManyWithoutUserInput
 }
 
 """
@@ -901,8 +1361,26 @@ input UserUpdateInput {
   name: String
   email: String
   password: String
-  scorePoints: ScorePointUpdateManyInput
+  scorePoints: ScorePointUpdateManyWithoutCreatedByInput
   votes: VoteUpdateManyWithoutUserInput
+  tournaments: TournamentUpdateManyWithoutUserInput
+}
+
+input UserUpdateManyWithoutTournamentsInput {
+  create: [UserCreateWithoutTournamentsInput!]
+  connect: [UserWhereUniqueInput!]
+  disconnect: [UserWhereUniqueInput!]
+  delete: [UserWhereUniqueInput!]
+  update: [UserUpdateWithWhereUniqueWithoutTournamentsInput!]
+  upsert: [UserUpsertWithWhereUniqueWithoutTournamentsInput!]
+}
+
+input UserUpdateOneWithoutScorePointsInput {
+  create: UserCreateWithoutScorePointsInput
+  connect: UserWhereUniqueInput
+  delete: Boolean
+  update: UserUpdateWithoutScorePointsDataInput
+  upsert: UserUpsertWithoutScorePointsInput
 }
 
 input UserUpdateOneWithoutVotesInput {
@@ -913,16 +1391,49 @@ input UserUpdateOneWithoutVotesInput {
   upsert: UserUpsertWithoutVotesInput
 }
 
+input UserUpdateWithoutScorePointsDataInput {
+  name: String
+  email: String
+  password: String
+  votes: VoteUpdateManyWithoutUserInput
+  tournaments: TournamentUpdateManyWithoutUserInput
+}
+
+input UserUpdateWithoutTournamentsDataInput {
+  name: String
+  email: String
+  password: String
+  scorePoints: ScorePointUpdateManyWithoutCreatedByInput
+  votes: VoteUpdateManyWithoutUserInput
+}
+
 input UserUpdateWithoutVotesDataInput {
   name: String
   email: String
   password: String
-  scorePoints: ScorePointUpdateManyInput
+  scorePoints: ScorePointUpdateManyWithoutCreatedByInput
+  tournaments: TournamentUpdateManyWithoutUserInput
+}
+
+input UserUpdateWithWhereUniqueWithoutTournamentsInput {
+  where: UserWhereUniqueInput!
+  data: UserUpdateWithoutTournamentsDataInput!
+}
+
+input UserUpsertWithoutScorePointsInput {
+  update: UserUpdateWithoutScorePointsDataInput!
+  create: UserCreateWithoutScorePointsInput!
 }
 
 input UserUpsertWithoutVotesInput {
   update: UserUpdateWithoutVotesDataInput!
   create: UserCreateWithoutVotesInput!
+}
+
+input UserUpsertWithWhereUniqueWithoutTournamentsInput {
+  where: UserWhereUniqueInput!
+  update: UserUpdateWithoutTournamentsDataInput!
+  create: UserCreateWithoutTournamentsInput!
 }
 
 input UserWhereInput {
@@ -1156,6 +1667,9 @@ input UserWhereInput {
   votes_every: VoteWhereInput
   votes_some: VoteWhereInput
   votes_none: VoteWhereInput
+  tournaments_every: TournamentWhereInput
+  tournaments_some: TournamentWhereInput
+  tournaments_none: TournamentWhereInput
 }
 
 input UserWhereUniqueInput {

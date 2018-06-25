@@ -5,6 +5,7 @@ type User {
   password: String!
   scorePoints: [ScorePoint!]!
   votes: [Vote!]!
+  tournaments: [Tournament!]!
 
 }
 
@@ -13,7 +14,9 @@ type ScorePoint{
   scoreLane: String!
   score: String!
   createdAt: DateTime!
+  createdBy: User!
   votes: [Vote!]!
+  tournaments: Tournament
 }
 
 type LaneInfo{
@@ -26,5 +29,14 @@ type Vote{
   id: ID! @unique
   scorePoint: ScorePoint!
   user: User!
+}
+
+type Tournament {
+  id: ID! @unique
+  name: String!
+  location: String!
+  score: [ScorePoint!]!
+  user: [User!]!
+
 }
 

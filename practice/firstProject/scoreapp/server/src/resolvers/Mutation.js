@@ -66,12 +66,24 @@ function post(parent, args, context, info) {
       {
         data: {
           scoreLane: args.scoreLane,
-          score: args.score
+          score: args.score,
+          createdBy: {connect: {id: userId}}
         },
       },
       info,
     )
   }
+
+  function createTournament(parent, args, context, info){
+      return context.db.mutation.createTournament(
+          {
+              data: {
+                  name: args.name,
+                  location: args.location
+              }
+          }
+      )
+  } 
 
 
 module.exports = {
@@ -79,4 +91,5 @@ module.exports = {
     login,
     post,
     vote,
+    createTournament,
 }

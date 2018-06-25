@@ -8,7 +8,7 @@ class Score extends Component {
             <div>
                 <div>
                     Points: 
-                    {this.props.score.score} in {this.props.score.scoreLane}
+                    {this.props.score.score} in {this.props.score.scoreLane} created by: {this.props.score.createdBy.name}
                 </div>
             </div>
         )

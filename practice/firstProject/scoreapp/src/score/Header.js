@@ -13,13 +13,19 @@ class Header extends Component {
       <div>
         <div><h1>Score App</h1></div>
         <Link to="/">
-          Score
+          Main App
         </Link>
-          | 
+        | 
         <Link to="/createScore">
           Create Score
         </Link>
-         | 
+        | 
+        <Link to="/createTournament">
+          Create Tournament
+        </Link>
+
+
+          |
          {authToken ? (
           <div
             className="ml1 pointer black"

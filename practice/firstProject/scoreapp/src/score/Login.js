@@ -64,7 +64,7 @@ class Login extends Component {
                     password,
                 },
             })
-            const {token} = result
+            const {token} = result.data.login
             this._saveUserData(token)
         } else {
             const result = await this.props.singup({
@@ -74,7 +74,8 @@ class Login extends Component {
                     password,
                 },
             })
-            const { token } = result
+            //console.log(result)
+            const { token } = result.data.signup
             this._saveUserData(token)
         }
         this.props.history.push('/')
