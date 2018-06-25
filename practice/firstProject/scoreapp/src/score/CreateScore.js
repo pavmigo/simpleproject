@@ -12,7 +12,7 @@ class CreateScore extends Component {
     render(){
         return(
             <div>
-                <div className = "Create Score">
+                <div className = "CreateScore">
                     Score: 
                     <input
                     className="createScore"
@@ -27,7 +27,7 @@ class CreateScore extends Component {
                     value = {this.state.scoreLane}
                     onChange= {e => this.setState({scoreLane: e.target.value})}
                     type = "text"
-                    palceholder = "Score Lane"
+                    placeholder = "Score Lane"
                     />
                 </div>
                 <button onClick = {() => this._createScore()}>Submit</button>
