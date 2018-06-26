@@ -60,14 +60,15 @@ async function vote(parent, args, context, info){
     },info,)
 }
 
-function post(parent, args, context, info) {
+async function post(parent, args, context, info) {
     const userId = getUserId(context)
     return context.db.mutation.createScorePoint(
       {
         data: {
           scoreLane: args.scoreLane,
           score: args.score,
-          createdBy: {connect: {id: userId}}
+          createdBy: {connect: {id: userId}},
+          tournaments: {connect: {id: args.tournamentId}},
         },
       },
       info,

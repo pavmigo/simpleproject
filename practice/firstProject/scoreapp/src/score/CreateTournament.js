@@ -10,6 +10,7 @@ class CreateTournament extends Component {
     }
 
     render(){
+        
         return(
             <div>
                 <div className = "CreateTournament">
@@ -67,7 +68,7 @@ const createTor_mutation = gql`
             location
             name
         }
-    }  
+    }
 `
 
 export default graphql(createTor_mutation, {name: 'mutation'}) (CreateTournament)

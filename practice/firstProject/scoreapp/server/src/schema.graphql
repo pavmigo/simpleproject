@@ -1,8 +1,8 @@
-# import VoteSubscriptionPayload, ScorePoint, ScorePointSubscriptionPayload, Vote, Tournament, TournamentSubscriptionPayload from "./generated/prisma.graphql"
+# import VoteSubscriptionPayload, User, ScorePoint, ScorePointSubscriptionPayload, Vote, Tournament, TournamentSubscriptionPayload from "./generated/prisma.graphql"
 
 
 type Query {
-  user: String!
+  users: [User!]!
   points: [ScorePoint!]!
   tournaments: [Tournament!]!
 }
@@ -14,7 +14,7 @@ type AuthPayload {
 
 
 type Mutation{
-    post(score: String!, scoreLane: String!): ScorePoint!
+    post(score: String!, scoreLane: String!, tournamentId: String!): ScorePoint!
     signup(email: String!, password: String!, name: String!): AuthPayload
     login(email: String!, password: String!): AuthPayload
     vote(scorePointID: ID!): Vote

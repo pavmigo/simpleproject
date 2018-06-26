@@ -1,15 +1,26 @@
 import React, { Component } from 'react'
-import { graphql } from 'react-apollo'
+import { graphql, compose } from 'react-apollo'
 import gql from 'graphql-tag'
 import {point_query} from './ScoreList'
+import {tournament_query} from './TournamentList'
+
 
 class CreateScore extends Component {
     state = {
         score: '',
-        scoreLane: ''
+        scoreLane: '',
+        tournamentId: ''
     }
 
     render(){
+        if(this.props.query && this.props.query.loading){
+            return <div>Loading </div>
+        }
+        if(this.props.query && this.props.query.error){
+            return <div>Error</div>
+        }
+        const tournamentsToRender = this.props.query.tournaments
+
         return(
             <div>
                 <div className = "CreateScore">
@@ -30,6 +41,16 @@ class CreateScore extends Component {
                     placeholder = "Score Lane"
                     />
                 </div>
+                <div>Select Tournament
+                    <select onChange = {e => this.setState({tournamentId: e.target.value})}>
+                        <option ></option>
+                        { tournamentsToRender.map((tournament) => (
+                            <option value = {tournament.id} >{tournament.name}</option>
+                        ))
+                        }
+
+                    </select>
+                </div>
                 <button onClick = {() => this._createScore()}>Submit</button>
 
             </div>
@@ -39,11 +60,14 @@ class CreateScore extends Component {
 
     }
     _createScore = async () =>{
-        const {score, scoreLane} = this.state
+        const {score, scoreLane, tournamentId} = this.state
+        console.log(this.state.tournamentId)
+        console.log(tournamentId)
         await this.props.mutation({
             variables: {
                 score,
-                scoreLane
+                scoreLane,
+                tournamentId
             },
             update: (store, {data: {post}}) => {
                 //console.log(store)
@@ -60,8 +84,8 @@ class CreateScore extends Component {
 }
 
 const POST_MUTATION = gql`
-    mutation PostMutation($score: String!, $scoreLane: String!) {
-        post(score: $score, scoreLane: $scoreLane){
+    mutation PostMutation($score: String!, $scoreLane: String!, $tournamentId: String!) {
+        post(score: $score, scoreLane: $scoreLane, tournamentId : $tournamentId){
             id
             score
             scoreLane
@@ -71,4 +95,7 @@ const POST_MUTATION = gql`
         }
     }
 `
-export default graphql(POST_MUTATION,{name: 'mutation'})(CreateScore)
+
+
+export default compose( graphql(POST_MUTATION,{name: 'mutation'}),
+    graphql(tournament_query,{name: 'query'})) (CreateScore)
