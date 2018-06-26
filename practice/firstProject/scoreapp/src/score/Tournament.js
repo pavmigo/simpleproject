@@ -5,12 +5,18 @@ class Tournament extends Component {
         return(
             <div>
                 <div>
-                    Tournament:
-                        {this.props.tournament.name}||Location: {this.props.tournament.location}
+                    Tournament: 
+                        {this.props.tournament.name}| |Location: {this.props.tournament.location}
+                        
                 </div>
                 <div>
                     Score of Tournament:
-                    Implemented later
+                    {this.props.tournament.score.map((score) => (
+                        <div key = {score.id} >
+                        Score: {score.score} in lane {score.scorelane} by {score.createdBy.name}
+                        </div>
+                    ))
+                    }
                 </div>
             </div>
         )

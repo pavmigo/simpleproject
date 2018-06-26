@@ -46,13 +46,13 @@ class CreateTournament extends Component {
                 name,
                 location
             },
-            update: (store, {data: {post}}) => {
-                console.log(store)
+            update: (store, {data: {createTournament}}) => {
+                //console.log(store)
                 const data = store.readQuery({query: tournament_query })
                 console.log(data)
 
-                data.tournaments.splice(0,0, post)
-                console.log(post)
+                data.tournaments.splice(0,0, createTournament)
+                //console.log(post)
                 //console.log(store)
                 store.writeQuery({
                     query: tournament_query,
@@ -72,6 +72,13 @@ const createTor_mutation = gql`
             id
             name
             location
+            score{
+                score
+                scoreLane
+                createdBy{
+                  name
+                }
+            }
         }
     }
 `

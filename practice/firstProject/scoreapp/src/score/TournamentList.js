@@ -7,6 +7,7 @@ import Tournament from './Tournament'
 class TournamentList extends Component {
     componentDidMount() {
         this._subscribeToNewTournament()
+        this._subscribeToNewScore()
     }
 
     render() {
@@ -39,17 +40,21 @@ class TournamentList extends Component {
             subscription{
                 newTournament{
                   node{
-                    id
                     name
                     location
                     score{
                       id
                       score
                       scoreLane
+                      createdBy{
+                        id
+                        name
+                      }
                     }
                   }
                 }
               }
+
             `
             ,
             updateQuery: (previous, {subscriptionData}) => {
@@ -65,6 +70,35 @@ class TournamentList extends Component {
         })
     }
 
+    _subscribeToNewScore = () => {
+        this.props.tourQuery.subscribeToMore({
+            document: gql`
+            subscription{
+                newScorePoints{
+                  node{
+                    id
+                    tournaments{
+                      id
+                      name
+                      location
+                      score{
+                        score
+                        scoreLane
+                        createdBy{
+                          id
+                          name
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            `,
+
+        })
+
+    }
+
 
 
 }
@@ -75,6 +109,13 @@ export const tournament_query = gql`
             id
             name
             location
+            score{
+                score
+                scoreLane
+                createdBy{
+                    name
+                }
+            }
         }
     }
     `

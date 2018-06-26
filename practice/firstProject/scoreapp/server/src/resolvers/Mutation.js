@@ -81,8 +81,8 @@ async function post(parent, args, context, info) {
     )
   }
 
-  function createTournament(parent, args, context, info){
-      return context.db.mutation.createTournament(
+  async function createTournament(parent, args, context, info){
+      const result = await context.db.mutation.createTournament(
           {
               data: {
                   name: args.name,
@@ -92,6 +92,9 @@ async function post(parent, args, context, info) {
           },
           info,
       )
+
+      console.log("Result: " ,result)
+      return result
   } 
 
 
