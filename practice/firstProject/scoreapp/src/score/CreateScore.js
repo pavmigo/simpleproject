@@ -45,7 +45,7 @@ class CreateScore extends Component {
                     <select onChange = {e => this.setState({tournamentId: e.target.value})}>
                         <option ></option>
                         { tournamentsToRender.map((tournament) => (
-                            <option value = {tournament.id} >{tournament.name}</option>
+                            <option value = {tournament.id} key = {tournament.id}>{tournament.name}</option>
                         ))
                         }
 
@@ -61,8 +61,6 @@ class CreateScore extends Component {
     }
     _createScore = async () =>{
         const {score, scoreLane, tournamentId} = this.state
-        console.log(this.state.tournamentId)
-        console.log(tournamentId)
         await this.props.mutation({
             variables: {
                 score,
@@ -71,6 +69,7 @@ class CreateScore extends Component {
             },
             update: (store, {data: {post}}) => {
                 //console.log(store)
+                console.log(post)
                 const data = store.readQuery({ query: point_query})
                 data.points.splice(0,0, post)
                 store.writeQuery({

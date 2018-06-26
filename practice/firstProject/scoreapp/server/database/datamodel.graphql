@@ -36,6 +36,7 @@ type Tournament {
   name: String!
   location: String!
   score: [ScorePoint!]!
+  user: [User!]!
 
 }
 

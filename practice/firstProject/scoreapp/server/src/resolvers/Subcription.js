@@ -13,7 +13,7 @@ function newVoteSubscribe (parent, args, context, info){
 }
 
 function newTournamentSubscribe (parent, args, context, info){
-    return context.db.subcripton.tournament(
+    return context.db.subscription.tournament(
         {where: {mutation_in: ['CREATED']}},
         info,
     )

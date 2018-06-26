@@ -41,21 +41,26 @@ class CreateTournament extends Component {
     }
     _createTournament = async () =>{
         const{name, location} = this.state
-        await this.props.mutation({
+        await this.props.tour_mutation({
             variables: {
                 name,
                 location
             },
             update: (store, {data: {post}}) => {
+                console.log(store)
                 const data = store.readQuery({query: tournament_query })
-                data.points.splice(0,0, post)
+                console.log(data)
+
+                data.tournaments.splice(0,0, post)
+                console.log(post)
+                //console.log(store)
                 store.writeQuery({
                     query: tournament_query,
-                    data
+                    data,
                 })
             }
         })
-        this.props.history.push('/')
+        this.props.history.push('/tournamentList')
     }
 
 }
@@ -65,10 +70,10 @@ const createTor_mutation = gql`
     mutation CreateMutation($name: String!, $location: String!){
         createTournament(name: $name, location: $location){
             id
-            location
             name
+            location
         }
     }
 `
 
-export default graphql(createTor_mutation, {name: 'mutation'}) (CreateTournament)
+export default graphql(createTor_mutation, {name: 'tour_mutation'}) (CreateTournament)

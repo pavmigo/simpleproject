@@ -62,6 +62,12 @@ async function vote(parent, args, context, info){
 
 async function post(parent, args, context, info) {
     const userId = getUserId(context)
+    context.db.mutation.updateUser({
+        data: {
+            tournaments: {connect: {id: args.tournamentId}}
+        }
+    })
+    
     return context.db.mutation.createScorePoint(
       {
         data: {
@@ -82,8 +88,9 @@ async function post(parent, args, context, info) {
                   name: args.name,
                   location: args.location
                   //Later add conections
-              }
-          }
+              },
+          },
+          info,
       )
   } 
 
