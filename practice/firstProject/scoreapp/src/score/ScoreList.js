@@ -99,6 +99,9 @@ export const point_query = gql`
                 id
                 name
             }
+            tournaments{
+                id
+            }
         }
     }
   `

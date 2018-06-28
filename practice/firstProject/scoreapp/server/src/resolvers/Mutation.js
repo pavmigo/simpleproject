@@ -62,13 +62,19 @@ async function vote(parent, args, context, info){
 
 async function post(parent, args, context, info) {
     const userId = getUserId(context)
-    context.db.mutation.updateUser({
+    await context.db.mutation.updateUser({
+        where: {
+            id: userId
+        },
         data: {
             tournaments: {connect: {id: args.tournamentId}}
-        }
-    })
+        },
+
+    },
+    info
+    )
     
-    return context.db.mutation.createScorePoint(
+    return await context.db.mutation.createScorePoint(
       {
         data: {
           scoreLane: args.scoreLane,
@@ -82,7 +88,7 @@ async function post(parent, args, context, info) {
   }
 
   async function createTournament(parent, args, context, info){
-      const result = await context.db.mutation.createTournament(
+        return result = await context.db.mutation.createTournament(
           {
               data: {
                   name: args.name,
@@ -92,10 +98,36 @@ async function post(parent, args, context, info) {
           },
           info,
       )
+     
+  }
+  
+async function addUserToTournament(parent, args, context, info){
+    const userId = getUserId(context)
+    return context.db.mutation.updateUser({
+            where:{
+              id: userId
+            },
+            data: {
+                tournaments: {connect: {id: args.tournamentId}}
+            },
+        },
+        info,
 
-      console.log("Result: " ,result)
-      return result
-  } 
+    
+    )
+}
+
+async function addPlayer(parent, args, context, info){
+    return null
+}
+
+async function addManager(parent, args, context, info){
+    return null
+}
+
+async function updateScore(parent, args, context, info){
+    return null
+}
 
 
 module.exports = {
@@ -104,4 +136,8 @@ module.exports = {
     post,
     vote,
     createTournament,
+    addUserToTournament,
+    addPlayer,
+    addManager,
+    updateScore,
 }

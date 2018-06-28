@@ -3,9 +3,9 @@ type User {
   name: String!
   email: String! @unique
   password: String!
-  scorePoints: [ScorePoint!]!
+  scorePoints: [ScorePoint!]! @relation (name: "UserScore")
   votes: [Vote!]!
-  tournaments: [Tournament!]!
+  tournaments: [Tournament!]! @relation(name: "UserTournaments")
 
 }
 
@@ -14,9 +14,9 @@ type ScorePoint{
   scoreLane: String!
   score: String!
   createdAt: DateTime!
-  createdBy: User!
+  createdBy: User! @relation (name: "UserScore")
   votes: [Vote!]!
-  tournaments: Tournament
+  tournaments: Tournament! @relation(name: "TourScore")
 }
 
 type LaneInfo{
@@ -35,8 +35,19 @@ type Tournament {
   id: ID! @unique
   name: String!
   location: String!
-  score: [ScorePoint!]!
-  user: [User!]!
+  score: [ScorePoint!]! @relation(name: "TourScore")
+  user: [User!]! @relation(name: "UserTournaments")
 
 }
+
+type Manager {
+  id: ID! @unique
+  user: User! @unique
+}
+
+type Player {
+  id: ID! @unique
+  user: User! @unique 
+}
+
 

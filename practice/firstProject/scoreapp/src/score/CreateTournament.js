@@ -49,7 +49,7 @@ class CreateTournament extends Component {
             update: (store, {data: {createTournament}}) => {
                 //console.log(store)
                 const data = store.readQuery({query: tournament_query })
-                console.log(data)
+                //console.log(data)
 
                 data.tournaments.splice(0,0, createTournament)
                 //console.log(post)

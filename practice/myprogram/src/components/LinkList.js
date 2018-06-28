@@ -198,7 +198,7 @@ export const FEED_QUERY = gql`
           const first = isNewPage ? LINKS_PER_PAGE : 100
           const orderBy = isNewPage ? 'createdAt_DESC' : null
           return {
-            variables: { first, skip, orderBy },
+            variables: { first, skip, orderBy }, 
           }
         },
       })(LinkList)

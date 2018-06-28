@@ -60,7 +60,9 @@ class CreateScore extends Component {
 
     }
     _createScore = async () =>{
-        const {score, scoreLane, tournamentId} = this.state
+        const score = this.state.score
+        const scoreLane = this.state.scoreLane
+        const tournamentId = this.state.tournamentId
         await this.props.mutation({
             variables: {
                 score,
@@ -69,13 +71,27 @@ class CreateScore extends Component {
             },
             update: (store, {data: {post}}) => {
                 //console.log(store)
-                console.log(post)
-                const data = store.readQuery({ query: point_query})
+                //console.log(post)
+                var data = store.readQuery({ query: point_query})
+                //const dataTour = store.readQuery({query: tournament_query})
+                
                 data.points.splice(0,0, post)
+                console.log("dataPoint: ", data)
                 store.writeQuery({
                     query: point_query,
                     data,
                 })
+
+                data = store.readQuery({query: tournament_query})
+                const tournament = data.tournaments.find(tournament => tournament.id === post.tournaments.id)
+                tournament.score.splice(0,0,post)
+                store.writeQuery({
+                    query: tournament_query,
+                    data,
+                })
+
+                console.log(store.readQuery)
+
             }
         })
         this.props.history.push('/')
@@ -91,10 +107,17 @@ const POST_MUTATION = gql`
             createdBy{
                 name
             }
+            tournaments{
+                id
+            }
         }
     }
 `
 
 
-export default compose( graphql(POST_MUTATION,{name: 'mutation'}),
-    graphql(tournament_query,{name: 'query'})) (CreateScore)
+
+export default compose(
+    graphql(POST_MUTATION, {name: 'mutation'}),
+    graphql(tournament_query,{ name: 'query'}) 
+    
+) (CreateScore)
